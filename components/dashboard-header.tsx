@@ -15,11 +15,11 @@ export function DashboardHeader() {
   const router = useRouter()
 
   const handleLogout = () => {
-    // 🔴 Ajusta según cómo guardes la sesión
-    localStorage.removeItem("token")
-    localStorage.removeItem("admin")
-
-    router.push("/login")
+    // Elimina todas las claves de sesión
+    localStorage.removeItem("token");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("isAdminLogged");
+    router.push("/login");
   }
 
   return (

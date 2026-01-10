@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API_URL = "http://192.168.1.72:3000/api/admin-auth";
+const API_URL = "https://telmex-backend.onrender.com/api/admin-auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

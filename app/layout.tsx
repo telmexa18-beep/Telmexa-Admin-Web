@@ -1,3 +1,4 @@
+// ...
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
@@ -33,17 +34,19 @@ export const metadata: Metadata = {
   },
 }
 
+import { AuthGuard } from "@/components/auth-guard";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={`font-sans antialiased`}>
-        {children}
+        <AuthGuard>{children}</AuthGuard>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }
