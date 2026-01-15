@@ -33,10 +33,26 @@ const API_WORKERS = "https://telmex-backend.onrender.com/api/workers"
 const API_POLES = "https://telmex-backend.onrender.com/api/poles"
 
 const statsBase = [
-  { name: "Total Clientes", value: 0, icon: Users, color: "text-red-500", key: "clients" },
-  { name: "Total Trabajadores", value: 0, icon: Briefcase, color: "text-red-500", key: "workers" },
-  { name: "Incidencias Abiertas", value: 0, icon: AlertCircle, color: "text-red-500", key: "incidents" },
-  { name: "Postes Registrados", value: 0, icon: Columns3, color: "text-red-500", key: "poles" },
+  { name: "Total Clientes", 
+    value: 0, 
+    icon: Users, 
+    color: "text-red-500", 
+    key: "clients" },
+  { name: "Total Trabajadores", 
+    value: 0, 
+    icon: Briefcase, 
+    color: "text-red-500", 
+    key: "workers" },
+  { name: "Incidencias Abiertas", 
+    value: 0, 
+    icon: AlertCircle, 
+    color: "text-red-500", 
+    key: "incidents" },
+  { name: "Postes Registrados", 
+    value: 0, 
+    icon: Columns3, 
+    color: "text-red-500", 
+    key: "poles" },
 ]
 
 export function OverviewSection() {
@@ -79,7 +95,6 @@ export function OverviewSection() {
           )
         )
       })
-
     fetch(API_INCIDENCIAS)
       .then(res => res.json())
       .then(data => {
@@ -91,7 +106,6 @@ export function OverviewSection() {
           )
         )
       })
-
     fetch(API_WORKERS)
       .then(res => res.json())
       .then(data => {
@@ -152,3 +166,4 @@ export function OverviewSection() {
 function cn(...classes: string[]) {
   return classes.filter(Boolean).join(" ")
 }
+
