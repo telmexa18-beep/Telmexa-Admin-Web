@@ -22,7 +22,7 @@ interface Incident {
   code: string;
   description: string;
   report_date: string;
-  status: "Pendiente" | "En progreso" | "Resuelto";
+  status: "En progreso" | "Resuelto";
   priority: "Baja" | "Media" | "Alta";
   client: string | null;
   worker: string | null;
@@ -124,7 +124,7 @@ export function IncidentsSection() {
     code: "",
     description: "",
     report_date: "",
-    status: "Pendiente",
+    status: "En progreso",
     priority: "Media",
     client: "",
     worker: "",
@@ -512,7 +512,6 @@ export function IncidentsSection() {
                               })
                             }
                           >
-                            <option value="Pendiente">Pendiente</option>
                             <option value="En progreso">En progreso</option>
                             <option value="Resuelto">Resuelto</option>
                           </select>
