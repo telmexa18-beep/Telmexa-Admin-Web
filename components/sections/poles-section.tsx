@@ -133,12 +133,17 @@ export function PolesSection() {
       const response = await fetch(`https://telmex-backend.onrender.com/api/poles/${selectedPole.code}`, {
         method: "DELETE"
       });
-      if (!response.ok) throw new Error("Error al eliminar");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al eliminar el poste");
+      }
       setPoles(poles.filter(p => p.code !== selectedPole.code));
       setDeleteConfirm(false);
       setSelectedPole(null);
-    } catch {
-      alert("No se pudo eliminar el poste.");
+      alert("Poste eliminado correctamente");
+    } catch (error: any) {
+      alert(`No se pudo eliminar el poste: ${error.message || "Error desconocido"}`);
+      setDeleteConfirm(false);
     }
   };
 
@@ -466,70 +471,72 @@ export function PolesSection() {
                   <Button variant="destructive" size="icon" aria-label="Eliminar" onClick={() => { setSelectedPole(pole); setDeleteConfirm(true); }}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </Button>
-                </div>    
-                {/* Modal de edición */}
-                {editModal && selectedPole && (
-                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                      <h3 className="text-xl font-bold mb-4">Editar Poste</h3>
-                        <form onSubmit={handleUpdate} className="space-y-4">
-                          <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-code">Código</Label>
-                              <Input id="edit-code" value={editForm.code} onChange={e => setEditForm({ ...editForm, code: e.target.value })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-title">Título</Label>
-                              <Input id="edit-title" value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-description">Descripción</Label>
-                              <Input id="edit-description" value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-address">Dirección</Label>
-                              <Input id="edit-address" value={editForm.address} onChange={e => setEditForm({ ...editForm, address: e.target.value })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-latitude">Latitud</Label>
-                              <Input id="edit-latitude" type="number" value={editForm.latitude} onChange={e => setEditForm({ ...editForm, latitude: Number(e.target.value) })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-longitude">Longitud</Label>
-                              <Input id="edit-longitude" type="number" value={editForm.longitude} onChange={e => setEditForm({ ...editForm, longitude: Number(e.target.value) })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-zone">Zona</Label>
-                              <Input id="edit-zone" value={editForm.zone} onChange={e => setEditForm({ ...editForm, zone: e.target.value })} required />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-client">Cliente</Label>
-                              <Input id="edit-client" value={editForm.client} onChange={e => setEditForm({ ...editForm, client: e.target.value })} required />
-                            </div>
-                          </div>
-                          <div className="flex gap-2 mt-4">
-                            <Button type="submit">Guardar Cambios</Button>
-                            <Button type="button" variant="outline" onClick={() => setEditModal(false)}>Cancelar</Button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  )}
-                  {/* Modal de confirmación de borrado */}
-                  {deleteConfirm && selectedPole && (
-                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                        <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar poste?</h3>
-                        <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar el poste <b>{selectedPole.code}</b>?</p>
-                        <div className="flex gap-2 mt-6 justify-end">
-                          <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
-                          <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
+              </div>
               ))
+            )}
+
+            {/* Modal de edición */}
+            {editModal && selectedPole && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4">Editar Poste</h3>
+                  <form onSubmit={handleUpdate} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-code">Código</Label>
+                        <Input id="edit-code" value={editForm.code} onChange={e => setEditForm({ ...editForm, code: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-title">Título</Label>
+                        <Input id="edit-title" value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-description">Descripción</Label>
+                        <Input id="edit-description" value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-address">Dirección</Label>
+                        <Input id="edit-address" value={editForm.address} onChange={e => setEditForm({ ...editForm, address: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-latitude">Latitud</Label>
+                        <Input id="edit-latitude" type="number" value={editForm.latitude} onChange={e => setEditForm({ ...editForm, latitude: Number(e.target.value) })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-longitude">Longitud</Label>
+                        <Input id="edit-longitude" type="number" value={editForm.longitude} onChange={e => setEditForm({ ...editForm, longitude: Number(e.target.value) })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-zone">Zona</Label>
+                        <Input id="edit-zone" value={editForm.zone} onChange={e => setEditForm({ ...editForm, zone: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-client">Cliente</Label>
+                        <Input id="edit-client" value={editForm.client} onChange={e => setEditForm({ ...editForm, client: e.target.value })} required />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button type="submit">Guardar Cambios</Button>
+                      <Button type="button" variant="outline" onClick={() => setEditModal(false)}>Cancelar</Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Modal de confirmación de borrado */}
+            {deleteConfirm && selectedPole && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar poste?</h3>
+                  <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar el poste <b>{selectedPole.code}</b>?</p>
+                  <div className="flex gap-2 mt-6 justify-end">
+                    <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
+                    <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              </div>
             )}
             {/* Modal de detalles */}
             {showDetails && selectedPole && (

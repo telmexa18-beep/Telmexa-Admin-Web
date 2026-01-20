@@ -79,12 +79,17 @@ export function ClientsSection() {
       const response = await fetch(`https://telmex-backend.onrender.com/api/clients/${selectedClient.code}`, {
         method: "DELETE"
       });
-      if (!response.ok) throw new Error("Error al eliminar");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al eliminar el cliente");
+      }
       setClients(clients.filter(c => c.code !== selectedClient.code));
       setDeleteConfirm(false);
       setSelectedClient(null);
-    } catch {
-      alert("No se pudo eliminar el cliente.");
+      alert("Cliente eliminado correctamente");
+    } catch (error: any) {
+      alert(`No se pudo eliminar el cliente: ${error.message || "Error desconocido"}`);
+      setDeleteConfirm(false);
     }
   };
 
@@ -408,102 +413,101 @@ export function ClientsSection() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </Button>
                 </div>
-
-                {/* Modal de edición */}
-                {editModal && selectedClient && (
-                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                      <h3 className="text-xl font-bold mb-4">Editar Cliente</h3>
-                        <form onSubmit={handleUpdate} className="space-y-4">
-                          <div className="grid gap-4 md:grid-cols-3">
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-code">Código</Label>
-                              <Input id="edit-code" value={editForm.code} disabled />
-                            </div>
-                            <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor="edit-name">Nombre</Label>
-                              <Input
-                                id="edit-name"
-                                value={editForm.name}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, name: e.target.value })
-                                }
-                              />
-                            </div>
-                          </div>
-                          <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-email">Email</Label>
-                              <Input
-                                id="edit-email"
-                                value={editForm.email}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, email: e.target.value })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-phone">Teléfono</Label>
-                              <Input
-                                id="edit-phone"
-                                value={editForm.phone}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, phone: e.target.value })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-address">Dirección</Label>
-                              <Input
-                                id="edit-address"
-                                value={editForm.address}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, address: e.target.value })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-zone">Zona</Label>
-                              <Input
-                                id="edit-zone"
-                                value={editForm.zone}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, zone: e.target.value })
-                                }
-                              />
-                            </div>
-                          </div>
-                          <div className="flex gap-2 mt-4">
-                            <Button type="submit">Guardar Cambios</Button>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => setEditModal(false)}
-                            >
-                              Cancelar
-                            </Button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  )}
-
-
-                  {/* Modal de confirmación de borrado */}
-                  {deleteConfirm && selectedClient && (
-                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                        <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar cliente?</h3>
-                        <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar el cliente <b>{selectedClient.code}</b>?</p>
-                        <div className="flex gap-2 mt-6 justify-end">
-                          <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
-                          <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
               </div>
               ))
+            )}
+
+            {/* Modal de edición */}
+            {editModal && selectedClient && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4">Editar Cliente</h3>
+                  <form onSubmit={handleUpdate} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-code">Código</Label>
+                        <Input id="edit-code" value={editForm.code} disabled />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="edit-name">Nombre</Label>
+                        <Input
+                          id="edit-name"
+                          value={editForm.name}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, name: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-email">Email</Label>
+                        <Input
+                          id="edit-email"
+                          value={editForm.email}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, email: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-phone">Teléfono</Label>
+                        <Input
+                          id="edit-phone"
+                          value={editForm.phone}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, phone: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-address">Dirección</Label>
+                        <Input
+                          id="edit-address"
+                          value={editForm.address}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, address: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-zone">Zona</Label>
+                        <Input
+                          id="edit-zone"
+                          value={editForm.zone}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, zone: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button type="submit">Guardar Cambios</Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setEditModal(false)}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Modal de confirmación de borrado */}
+            {deleteConfirm && selectedClient && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar cliente?</h3>
+                  <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar el cliente <b>{selectedClient.code}</b>?</p>
+                  <div className="flex gap-2 mt-6 justify-end">
+                    <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
+                    <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Modal de detalles */}

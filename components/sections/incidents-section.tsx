@@ -94,12 +94,17 @@ export function IncidentsSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
       });
-      if (!res.ok) throw new Error("Error al eliminar");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al eliminar la incidencia");
+      }
       setIncidents(incidents.filter(c=> c.code !== selectedIncident.code));
       setDeleteConfirm(false);
       setSelectedIncident(null);
-    } catch {
-      alert("Error al eliminar la incidencia.");
+      alert("Incidencia eliminada correctamente");
+    } catch (error: any) {
+      alert(`No se pudo eliminar la incidencia: ${error.message || "Error desconocido"}`);
+      setDeleteConfirm(false);
     }
   };
 
@@ -472,130 +477,130 @@ export function IncidentsSection() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </Button>
               </div>
+            </div>
+              ))
+            )}
 
-              {/* Modal de edición */}
-              {editModal && selectedIncident && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                  <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                    <h3 className="text-xl font-bold mb-4">Editar Incidencia</h3>
-                    <form onSubmit={handleUpdate} className="space-y-4">
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="edit-code">Código</Label>
-                          <Input id="edit-code" value={editForm.code} disabled />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="edit-report-date">Fecha de reporte</Label>
-                          <Input
-                            id="edit-report-date"
-                            type="date"
-                            value={editForm.report_date?.substring(0, 10)}
-                            onChange={(e) =>
-                              setEditForm({ ...editForm, report_date: e.target.value })
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <Label htmlFor="edit-description">Descripción</Label>
-                          <Input id="edit-description" value={editForm.description}onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}required/>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="edit-status">Estado</Label>
-                          <select
-                            id="edit-status"
-                            className="w-full border rounded px-3 py-2"
-                            value={editForm.status}
-                            onChange={(e) =>
-                              setEditForm({
-                                ...editForm,
-                                status: e.target.value as Incident["status"],
-                              })
-                            }
-                          >
-                            <option value="En progreso">En progreso</option>
-                            <option value="Resuelto">Resuelto</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="edit-priority">Prioridad</Label>
-                          <select 
-                            id="edit-priority"
-                            className="w-full border rounded px-3 py-2"
-                            value={editForm.priority}
-                            onChange={(e) =>
-                              setEditForm({
-                                ...editForm,
-                                priority: e.target.value as Incident["priority"],
-                              })
-                            }
-                          >
-                            <option value="Baja">Baja</option>
-                            <option value="Media">Media</option>
-                            <option value="Alta">Alta</option>
-                          </select>
-                        </div>
-                        <div className="md:col-span-2">
-                          <div className="grid gap-4 md:grid-cols-3">
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-client">Cliente</Label>
-                              <Input
-                                id="edit-client"
-                                value={editForm.client ?? ""}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, client: e.target.value || null })
-                                }
-                              />
-                            </div>
+            {/* Modal de edición */}
+            {editModal && selectedIncident && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4">Editar Incidencia</h3>
+                  <form onSubmit={handleUpdate} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-code">Código</Label>
+                        <Input id="edit-code" value={editForm.code} disabled />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-report-date">Fecha de reporte</Label>
+                        <Input
+                          id="edit-report-date"
+                          type="date"
+                          value={editForm.report_date?.substring(0, 10)}
+                          onChange={(e) =>
+                            setEditForm({ ...editForm, report_date: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="edit-description">Descripción</Label>
+                        <Input id="edit-description" value={editForm.description}onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}required/>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-status">Estado</Label>
+                        <select
+                          id="edit-status"
+                          className="w-full border rounded px-3 py-2"
+                          value={editForm.status}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              status: e.target.value as Incident["status"],
+                            })
+                          }
+                        >
+                          <option value="En progreso">En progreso</option>
+                          <option value="Resuelto">Resuelto</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-priority">Prioridad</Label>
+                        <select 
+                          id="edit-priority"
+                          className="w-full border rounded px-3 py-2"
+                          value={editForm.priority}
+                          onChange={(e) =>
+                            setEditForm({
+                              ...editForm,
+                              priority: e.target.value as Incident["priority"],
+                            })
+                          }
+                        >
+                          <option value="Baja">Baja</option>
+                          <option value="Media">Media</option>
+                          <option value="Alta">Alta</option>
+                        </select>
+                      </div>
+                      <div className="md:col-span-2">
+                        <div className="grid gap-4 md:grid-cols-3">
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-client">Cliente</Label>
+                            <Input
+                              id="edit-client"
+                              value={editForm.client ?? ""}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, client: e.target.value || null })
+                              }
+                            />
+                          </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-worker">Técnico</Label>
-                              <Input
-                                id="edit-worker"
-                                value={editForm.worker ?? ""}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, worker: e.target.value || null })
-                                }
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-worker">Técnico</Label>
+                            <Input
+                              id="edit-worker"
+                              value={editForm.worker ?? ""}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, worker: e.target.value || null })
+                              }
+                            />
+                          </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-pole">Poste</Label>
-                              <Input
-                                id="edit-pole"
-                                value={editForm.pole ?? ""}
-                                onChange={(e) =>
-                                  setEditForm({ ...editForm, pole: e.target.value || null })
-                                }
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-pole">Poste</Label>
+                            <Input
+                              id="edit-pole"
+                              value={editForm.pole ?? ""}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, pole: e.target.value || null })
+                              }
+                            />
                           </div>
                         </div>
+                      </div>
 
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        <Button type="submit">Guardar Cambios</Button>
-                        <Button type="button" variant="outline" onClick={() => setEditModal(false)}>Cancelar</Button>
-                      </div>
-                    </form>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button type="submit">Guardar Cambios</Button>
+                      <Button type="button" variant="outline" onClick={() => setEditModal(false)}>Cancelar</Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Modal de confirmación de borrado */}
+            {deleteConfirm && selectedIncident && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar incidencia?</h3>
+                  <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar la incidencia <b>{selectedIncident.code}</b>?</p>
+                  <div className="flex gap-2 mt-6 justify-end">
+                    <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
+                    <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
                   </div>
                 </div>
-                )}
-
-                {/* Modal de confirmación de borrado */}
-                {deleteConfirm && selectedIncident && (
-                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                      <h3 className="text-xl font-bold mb-4 text-destructive">¿Eliminar incidencia?</h3>
-                      <p>Esta acción no se puede deshacer. ¿Seguro que deseas eliminar la incidencia <b>{selectedIncident.code}</b>?</p>
-                      <div className="flex gap-2 mt-6 justify-end">
-                        <Button variant="destructive" onClick={handleDelete}>Eliminar</Button>
-                        <Button variant="outline" onClick={() => setDeleteConfirm(false)}>Cancelar</Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
-              ))
             )}
 
             {/* Modal de detalles */}

@@ -147,12 +147,17 @@ export function WorkersSection() {
          const response = await fetch(`https://telmex-backend.onrender.com/api/workers/${selectedWorker.code}`, {
         method: "DELETE"
       });
-      if (!response.ok) throw new Error("Error al eliminar");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al eliminar el trabajador");
+      }
       setWorkers(workers.filter(w => w.code !== selectedWorker.code));
       setDeleteConfirm(false);
       setSelectedWorker(null);
-    } catch {
-      alert("No se pudo eliminar el trabajador.");
+      alert("Trabajador eliminado correctamente");
+    } catch (error: any) {
+      alert(`No se pudo eliminar el trabajador: ${error.message || "Error desconocido"}`);
+      setDeleteConfirm(false);
     }
   };
 
