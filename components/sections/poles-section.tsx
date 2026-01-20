@@ -130,7 +130,7 @@ export function PolesSection() {
   const handleDelete = async () => {
     if (!selectedPole) return;
     try {
-      const response = await fetch(`http://192.168.1.72:3000/api/poles/${selectedPole.code}`, {
+      const response = await fetch(`https://telmex-backend.onrender.com/api/poles/${selectedPole.code}`, {
         method: "DELETE"
       });
       if (!response.ok) throw new Error("Error al eliminar");

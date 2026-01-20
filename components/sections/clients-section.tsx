@@ -76,7 +76,7 @@ export function ClientsSection() {
   const handleDelete = async () => {
     if (!selectedClient) return;
     try {
-      const response = await fetch(`http://192.168.1.72:3000/api/clients/${selectedClient.code}`, {
+      const response = await fetch(`https://telmex-backend.onrender.com/api/clients/${selectedClient.code}`, {
         method: "DELETE"
       });
       if (!response.ok) throw new Error("Error al eliminar");
@@ -127,7 +127,7 @@ export function ClientsSection() {
     setError("");
     setSearchResult(null);
     try {
-      const res = await fetch(`http://192.168.1.72:3000/api/clients/${searchCode.trim()}`);
+      const res = await fetch(`https://telmex-backend.onrender.com/api/clients/${searchCode.trim()}`);
       if (!res.ok) throw new Error("No se encontró el cliente");
       const data = await res.json();
       if (data && data.data) setSearchResult(data.data);
