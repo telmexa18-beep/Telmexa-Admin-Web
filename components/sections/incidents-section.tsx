@@ -36,7 +36,7 @@ export function IncidentsSection() {
     code: "",
     description: "",
     report_date: "",
-    status: "Pendiente",
+    status: "En progreso",
     priority: "Media",
     client: null,
     worker: null,
@@ -69,7 +69,7 @@ export function IncidentsSection() {
     if (!selectedIncident) return;
     try{
       const res = await fetch(
-      `http://192.168.1.72:3000/api/incidents/${selectedIncident.code}`,
+      `https://telmex-backend.onrender.com/api/incidents/${selectedIncident.code}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
